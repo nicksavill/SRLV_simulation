@@ -65,10 +65,10 @@ void R0(int n_age_classes, params_t *p, double *lambs_per_dam, double *p_infecti
     eigen_t *eigen) {
     int max_age = p->max_age;
     int age_first_mating = p->age_first_mating;
-    enum month weaning_month = p->weaning_month;
+    // enum month weaning_month = p->weaning_month;
     enum month sale_month = p->sale_month;
     double prob_dam_to_lamb = p->prob_dam_to_lamb;
-    double beta_housed = p->beta_housed;
+    // double beta_housed = p->beta_housed;
 
     int c, i, a, m, tsi;
     int ae, ac;

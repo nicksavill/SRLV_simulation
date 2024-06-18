@@ -88,12 +88,17 @@ def mean_infected(filenames):
     fig, ax = plt.subplots(1, 1, figsize=(6.4, 4.8))
     labels = ['0.0', '0.1', '0.2']
     pmt = np.array(list(range(25)) + list(range(30, 70, 10)))
+
+    # R0 taken from output of simulations for MT=0
     R0 = [
-        0.000000, 0.125805, 0.251324, 0.376556, 0.501503, 0.626165,
-        0.750544, 0.874639, 0.998452, 1.121983, 1.245233, 1.368203,
-        1.490893, 1.613305, 1.735438, 1.857294, 1.978873, 2.100177,
-        2.221205, 2.341958, 2.462438, 2.582645, 2.702579, 2.822242,
-        2.941633, 3.652330, 4.815603, 5.952934, 7.064983
+        0.122642, 0.245119, 0.367433, 0.489583,
+        0.611569, 0.733392, 0.855052, 0.976549,
+        1.097884, 1.219056, 1.340067, 1.460915,
+        1.581602, 1.702128, 1.822493, 1.942697,
+        2.062740, 2.182623, 2.302346, 2.421909,
+        2.541312, 2.660557, 2.779642, 2.898568,
+        3.017335, 3.726623, 4.896240, 6.050398,
+        7.189333,
     ]
     n = len(pmt)
 
@@ -115,41 +120,16 @@ def mean_infected(filenames):
             if len(d) == 0:
                 d = np.zeros(1)
             # the mean equilibrium prevalence over all sims
-            mean_equilibrium_prevalence = np.median(d)
-            print(mean_equilibrium_prevalence)
-
-            d = 100*np.array([np.percentile(z['flock_infected_prevalence'][-100:], 2.5) for z in stochastic])
-            d = d[d>0]
-            if len(d) == 0:
-                d = np.zeros(1)
-            lower_equilibrium_sero = np.mean(d)
-
-            d = 100*np.array([np.percentile(z['flock_infected_prevalence'][-100:], 97.5) for z in stochastic])
-            d = d[d>0]
-            if len(d) == 0:
-                d = np.zeros(1)
-            upper_equilibrium_sero = np.mean(d)
-
-
-            # print(i, mean_equilibrium_prevalence)
+            mean_equilibrium_prevalence = np.mean(d)
             msp.append(mean_equilibrium_prevalence)
-            lsp.append(lower_equilibrium_sero)
-            usp.append(upper_equilibrium_sero)
         
-        ax.plot(pmt, lsp, color=m['color'], lw=0.5)
-        ax.plot(pmt, usp, color=m['color'], lw=0.5)
-        ax.fill_between(pmt, lsp, usp, color=m['color'], alpha=0.5, label=label)
+        ax.plot(R0, msp, color=m['color'], lw=0.5, label=label)
 
-    ax.set_xlabel('Days housed per year')
-    ax.set_ylabel('Equilibrium prevalence\n(percentage of ewes infected)')
-
+    ax.set_ylabel('Mean 10-year prevalence\n(percentage of ewes infected)')
+    ax.axvline(1, ls=':', color='k')
+    ax.set_xlabel('R0 (horizontal transmission only)')
     plt.legend(title='Maternal transmission rate', loc='lower right')
 
-    ax2 = ax.twiny()
-    ax2.plot(R0, msp, lw=0)
-    ax2.axvline(1, ls=':', color='k')
-    ax2.set_xlabel('R0 (horizontal transmission only)')
-
-    fig.savefig('Figures/fig1.png')
+    fig.savefig('fig1.png')
 
 mean_infected(['MTvar00', 'MTvar01', 'MTvar02', ])

@@ -9,11 +9,11 @@ endif
 FLAGS = $(OPT) $(WARNINGS) -fopenmp
 LIBS = -lm -lgsl -lgslcblas
 
-sim: sim.o ngm_biased_sale.o det.o ibm.o func.o
+sim: sim.o ngm.o det.o ibm.o func.o
 	$(CC) $(FLAGS) $+ -o $@ $(LIBS) 
 sim.o: sim.c R0.h
 	$(CC) -c $(FLAGS) $<
-ngm_biased_sale.o: ngm_biased_sale.c R0.h
+ngm.o: ngm.c R0.h
 	$(CC) -c $(FLAGS) $<
 det.o: det.c R0.h
 	$(CC) -c $(FLAGS) $<
