@@ -125,7 +125,7 @@ void set_default_parameters(char *filename, char *text, int i, params_t *p) {
     p->weaning_month = April;          // month that lambs are weaned
     p->sale_month = September;         // month that lambs and oldest ewes are sold
     p->mating_month = October;         // month in which the number of mated ewes equals flock_size
-    p->housing_period = 1;             // number of months ewes are housed
+    p->housing_period = 4;             // number of months ewes are housed
     p->inter_pen_contact_weight = 0.;  // weighting of inter-pen transmission (0 to 1)
     p->sale_strategy = Random;         // how to sell lambs: Random or Oldest_dam_first
 
@@ -152,38 +152,52 @@ void set_default_parameters(char *filename, char *text, int i, params_t *p) {
 void MT_sims(params_t *p) {
     set_default_parameters("MTvar", "MTvar", 0, p);
     int i;
-    int N = 60; // the number of different values of beta_housed (and therefore R0)
-    double max_beta_housed = 0.1;
-    double scale[100]; // list of beta_housed scaling factors
     int n = 0;
+    // list of housing durations in days
+    double housing_duration[100]; 
+    // scale beta_housed as estimated from Houwers (30 ewes gives beta_housed=0.17) to a flock size of 100
+    double max_beta_housed = p->beta_housed * 30 / p->flock_size;
 
-    // scaling factors are initially close together to capture fine-scale changes in prevalence close to R0=1
+    // housing durations (in units of days) are initially close together to capture fine-scale changes in prevalence close to R0=1
     for (i = 0; i < 25; i++)
-        scale[n++] = i+1;
-    // scaling factors can be further apart as R0 increases
-    for (i = 30; i <= N; i+=10)
-        scale[n++] = i+1;
+        housing_duration[n++] = i+1;
+    // housing durations can be further apart as R0 increases
+    for (i = 30; i <= 10*p->housing_period; i+=10)
+        housing_duration[n++] = i+1;
 
+    // as the simulation time step is 1 month, housing durations can only be in units of months
+    // therefore we change beta_housed to simulate changes in housing duration and keep housing 
+    // duration constant at 4 months
     p->prob_dam_to_lamb = 0;
     for (i = 0; i < n; i++) {
-        p->beta_housed = max_beta_housed * scale[i] / (double) N;
-        sprintf(p->file, "%s%d", "MTvar00", i);
+        p->beta_housed = max_beta_housed * housing_duration[i] / (365./12. * p->housing_period);
+        sprintf(p->file, "%s%d", "MTvar00_10", i);
         run_multiple(p);
     }
 
-    p->prob_dam_to_lamb = 0.1;
+    p->prob_dam_to_lamb = 0.25;
     for (i = 0; i < n; i++) {
-        p->beta_housed = max_beta_housed * scale[i] / (double) N;
-        sprintf(p->file, "%s%d", "MTvar01", i);
+        p->beta_housed = max_beta_housed * housing_duration[i] / (365./12. * p->housing_period);
+        sprintf(p->file, "%s%d", "MTvar25_10", i);
         run_multiple(p);
     }
 
-    p->prob_dam_to_lamb = 0.2;
+    p->sim_years = 20; 
+    p->prob_dam_to_lamb = 0;
     for (i = 0; i < n; i++) {
-        p->beta_housed = max_beta_housed * scale[i] / (double) N;
-        sprintf(p->file, "%s%d", "MTvar02", i);
+        p->beta_housed = max_beta_housed * housing_duration[i] / (365./12. * p->housing_period);
+        sprintf(p->file, "%s%d", "MTvar00_20", i);
         run_multiple(p);
     }
+
+    p->prob_dam_to_lamb = 0.25;
+    for (i = 0; i < n; i++) {
+        p->beta_housed = max_beta_housed * housing_duration[i] / (365./12. * p->housing_period);
+        sprintf(p->file, "%s%d", "MTvar25_20", i);
+        run_multiple(p);
+    }
+
+
 }
 
 int main() {

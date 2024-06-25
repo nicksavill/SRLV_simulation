@@ -3,10 +3,8 @@ import matplotlib.pyplot as plt
 from copy import deepcopy
 from cycler import cycler
 
-color_cycle = cycler('color', ['C0', 'C1', 'C2'])
-marker_cycle = cycler('marker', ['o', 's', '^'])
-linestyle_cycle = cycler('ls', ['-', '-', '-'])
-hatch_cycle = cycler('hatch', ['-', '\\', '/'])
+color_cycle = cycler('color', ['C0', 'C1', 'C0', 'C1'])
+linestyle_cycle = cycler('ls', ['-', '-', '--', '--'])
 
 def new_dict(n_cohorts):
     x = [[] for _ in range(n_cohorts)]
@@ -86,26 +84,16 @@ def get_results(filename):
 
 def mean_infected(filenames):
     fig, ax = plt.subplots(1, 1, figsize=(6.4, 4.8))
-    labels = ['0.0', '0.1', '0.2']
-    pmt = np.array(list(range(25)) + list(range(30, 70, 10)))
+    labels = ['0.0', '0.25', '_', '_']
 
-    # R0 taken from output of simulations for MT=0
-    R0 = [
-        0.122642, 0.245119, 0.367433, 0.489583,
-        0.611569, 0.733392, 0.855052, 0.976549,
-        1.097884, 1.219056, 1.340067, 1.460915,
-        1.581602, 1.702128, 1.822493, 1.942697,
-        2.062740, 2.182623, 2.302346, 2.421909,
-        2.541312, 2.660557, 2.779642, 2.898568,
-        3.017335, 3.726623, 4.896240, 6.050398,
-        7.189333,
-    ]
+    pmt = np.array(list(range(1, 26)) + list(range(31, 51, 10)))
     n = len(pmt)
 
-    for filename, label, m in zip(filenames[::-1], labels[::-1], (color_cycle+hatch_cycle)[::-1]):
+    # R0 taken from output of simulations for MT=0
+    R0 = [0.125719, 0.251395, 0.377028, 0.502619, 0.628167, 0.753672, 0.879135, 1.004555, 1.129932, 1.255267, 1.380559, 1.505809, 1.631016, 1.756181, 1.881303, 2.006383, 2.131420, 2.256415, 2.381367, 2.506277, 2.631145, 2.755970, 2.880752, 3.005493, 3.130191, 3.877490, 5.119613]
+
+    for filename, label, m in zip(filenames[::-1], labels[::-1], (color_cycle+linestyle_cycle)[::-1]):
         msp = []
-        lsp = []
-        usp = []
         for i in range(n):
             f = filename + str(i) + '.txt'
             results = get_results(f'Results/{f}')
@@ -123,13 +111,19 @@ def mean_infected(filenames):
             mean_equilibrium_prevalence = np.mean(d)
             msp.append(mean_equilibrium_prevalence)
         
-        ax.plot(R0, msp, color=m['color'], lw=0.5, label=label)
+        ax.plot(R0, msp, color=m['color'], ls=m['ls'], lw=1, label=label)
 
-    ax.set_ylabel('Mean 10-year prevalence\n(percentage of ewes infected)')
+    ax.set_ylabel('Mean prevalence\n(percentage of ewes infected)')
     ax.axvline(1, ls=':', color='k')
     ax.set_xlabel('R0 (horizontal transmission only)')
+    ax.text(3, 70, '20-year prevalence', ha='right')
+    ax.text(2.5, 30, '10-year prevalence', ha='left')
     plt.legend(title='Maternal transmission rate', loc='lower right')
+
+    ax2 = ax.twiny()
+    ax2.plot(pmt, msp, lw=0)
+    ax2.set_xlabel('Days housed per year')
 
     fig.savefig('fig1.png')
 
-mean_infected(['MTvar00', 'MTvar01', 'MTvar02', ])
+mean_infected(['MTvar00_10', 'MTvar25_10', 'MTvar00_20', 'MTvar25_20',])
