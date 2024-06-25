@@ -104,7 +104,7 @@ double* natural_deaths(int n_age_classes) {
     double *removal_rate = doublevector(n_age_classes);
 
     // age-specific mortality and cull probabilities from Andrew's data
-    double prob_mortality[] = {0.001, 0.012, 0.027, 0.041, 0.019, 0.021, 0.034};
+    double prob_mortality[] = {0.1, 0.012, 0.027, 0.041, 0.019, 0.021, 0.034};
     double prob_culled[] = {0, 0.046, 0.065, 0.093, 0.134, 0.196, 0.295};
     // assume no mortality or culling
     // double prob_mortality[] = {0, 0, 0, 0, 0, 0, 0};
