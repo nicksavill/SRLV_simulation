@@ -41,6 +41,19 @@ void mix_in_housing(int youngest, int oldest, double pens, double ***contact_wei
                 contact_weights[m][i][c] = contact_weights[m][c][i] = 1/pens + p->inter_pen_contact_weight;
 }
 
+double*** all_mixed(params_t *p) {
+    /*
+        all ewes mix with all other ewes throughout the year + lambs (not reality)
+    */
+    int max_age = p->max_age;
+    double pens = p->pens;
+    double ***contact_weights = init_contact_weights(max_age);
+
+    mix_in_field(0, max_age, contact_weights, p);
+    mix_in_housing(0, max_age, pens, contact_weights, p);
+    return contact_weights;
+}
+
 double*** mixed(params_t *p) {
     /*
         all ewes mix with all other ewes throughout the year
@@ -146,7 +159,7 @@ void set_default_parameters(char *filename, char *text, int i, params_t *p) {
 
     p->num_ibm_sims = 1000;
     p->infectious_func = Constant;
-    p->contact_weight_func = &mixed;
+    p->contact_weight_func = &all_mixed;
 };
 
 void MT_sims(params_t *p) {
@@ -173,6 +186,7 @@ void MT_sims(params_t *p) {
         p->beta_housed = max_beta_housed * housing_duration[i] / (365./12. * p->housing_period);
         sprintf(p->file, "%s%d", "MTvar00_10", i);
         run_multiple(p);
+    printf("%d\n", i);
     }
 
     p->prob_dam_to_lamb = 0.25;
@@ -196,7 +210,6 @@ void MT_sims(params_t *p) {
         sprintf(p->file, "%s%d", "MTvar25_20", i);
         run_multiple(p);
     }
-
 
 }
 

@@ -3,8 +3,8 @@ import matplotlib.pyplot as plt
 from copy import deepcopy
 from cycler import cycler
 
-color_cycle = cycler('color', ['C0', 'C1', 'C0', 'C1'])
-linestyle_cycle = cycler('ls', ['-', '-', '--', '--'])
+color_cycle = cycler('color', ['C0', 'C1', 'C0', 'C1', 'C2', 'C2'])
+linestyle_cycle = cycler('ls', ['-', '-', '--', '--', '-', '--'])
 
 def new_dict(n_cohorts):
     x = [[] for _ in range(n_cohorts)]
@@ -126,4 +126,4 @@ def mean_infected(filenames):
 
     fig.savefig('fig1.png')
 
-mean_infected(['MTvar00_10', 'MTvar25_10', 'MTvar00_20', 'MTvar25_20',])
+mean_infected(['MTvar00_10', 'MTvar25_10', 'MTvar00_20', 'MTvar25_20'])
