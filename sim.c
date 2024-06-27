@@ -159,7 +159,7 @@ void set_default_parameters(char *filename, char *text, int i, params_t *p) {
 
     p->num_ibm_sims = 1000;
     p->infectious_func = Constant;
-    p->contact_weight_func = &all_mixed;
+    p->contact_weight_func = &mixed;
 };
 
 void MT_sims(params_t *p) {
