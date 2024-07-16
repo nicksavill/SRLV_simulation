@@ -175,7 +175,7 @@ void MT_sims(params_t *p) {
     for (i = 0; i < 25; i++)
         housing_duration[n++] = i+1;
     // housing durations can be further apart as R0 increases
-    for (i = 30; i <= 10*p->housing_period; i+=10)
+    for (i = 30; i <= 40; i+=10)
         housing_duration[n++] = i+1;
 
     // as the simulation time step is 1 month, housing durations can only be in units of months
