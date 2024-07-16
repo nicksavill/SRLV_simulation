@@ -130,12 +130,12 @@ void set_default_parameters(char *filename, char *text, int i, params_t *p) {
     strcpy(p->text, text);
     sprintf(p->file, "%s%d", filename, i);
 
-    p->flock_size = 100;                // number of mated ewes in mating month
+    p->flock_size = 100;               // number of mated ewes in mating month
     p->pens = 1;                       // number of pens
     p->sim_years = 10;                 // number of years to simulate
     p->max_age = 5;                    // maximum age of a ewe in years
     p->age_first_mating = 1;           // age in years when first mated
-    p->weaning_month = April;          // month that lambs are weaned
+    p->weaning_month = June;           // month that lambs are weaned
     p->sale_month = September;         // month that lambs and oldest ewes are sold
     p->mating_month = October;         // month in which the number of mated ewes equals flock_size
     p->housing_period = 4;             // number of months ewes are housed
@@ -153,7 +153,7 @@ void set_default_parameters(char *filename, char *text, int i, params_t *p) {
     p->tsi_removal = 1000;             // ewes with tsi greater than this value are sold
     p->gr_tsi_grad = 0;
 
-    // beta_housed = 0.17 corresponds to 43 ewes housed under typical stocking density (~1 m2/ewe) Houwers.
+    // beta_housed = 0.17 corresponds to 30 ewes housed under typical stocking density (~1 m2/ewe) Houwers.
     // if we assume that stocking density is independent of flock size and contact rate linearly 
     // changes with flock size then increasing flock size means beta_housed must be changed to keep R0 constant
 

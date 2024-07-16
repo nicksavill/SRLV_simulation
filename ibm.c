@@ -433,13 +433,10 @@ result_t* Stochastic_Sim(params_t *p, void **saved_cohorts) {
 
     // simulate over each year starting in April
     for (y = 0; y < sim_years; y++) {
-        // if (y == 0) {
-        //     infection_rate = monthly_infection_rate(p->housing_period, 0, p->beta_field);
-        // }
         // set number of seroconversions each year at start of year to 0
         seroconversions = 0;
 
-        for (m = 0; m < 12; m++) {
+        for (m = April; m < March; m++) {
             month = 12*y+m;
 
             // in the first mating month make a 1 year old in mated flock infectious
