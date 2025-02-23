@@ -77,7 +77,7 @@ static int get_number_in_cohort_in_state(enum state s, cohort_t *cohort) {
     // get number of ewes in cohort in state s
     if (s == Any)
         return cohort->num_ewes - get_number_in_cohort_in_state(Removed, cohort);
-    
+
     if (s == Infected)
         return get_number_in_cohort_in_state(Exposed, cohort) + get_number_in_cohort_in_state(Infectious, cohort);
 
@@ -136,7 +136,7 @@ static int get_number_mated_in_sero_state(enum sero_state s, cohort_t *cohorts, 
     // ie do not count the oldest ewes which will be sold before being mated
     int i, count = 0;
     cohort_t *cohort;
-    
+
     for (i = age_first_mating; i < max_age; i++) {
         cohort = get_cohort_of_age(i, cohorts, n_cohorts);
         if (cohort)
@@ -150,7 +150,7 @@ static int get_number_mated_in_state(enum state s, cohort_t *cohorts, int n_coho
     // ie do not count the oldest ewes which will be sold before being mated
     int i, count = 0;
     cohort_t *cohort;
-    
+
     for (i = age_first_mating; i < max_age; i++) {
         cohort = get_cohort_of_age(i, cohorts, n_cohorts);
         if (cohort)
@@ -163,13 +163,13 @@ static double get_cohort_infectiousness(cohort_t *cohort, params_t *p) {
     // get infectiousness of all infectious ewes in a cohort
     if (cohort == NULL)
         return 0;
-    
+
     int i;
     ewe_t *ewe;
     double infectiousness = 0;
 
     for (i = 0; i < cohort->num_ewes; i++) {
-        ewe = &cohort->ewes[i]; 
+        ewe = &cohort->ewes[i];
         if (ewe->state == Infectious)
             infectiousness += p->inf_fn_scale * (*p->inf_fn)(ewe->tsi, p);
     }
@@ -185,7 +185,7 @@ static void infect_ewes_in_cohort(int n, cohort_t *cohort, params_t *p, enum sta
     while (n > 0) {
         // choose a random ewe in this cohort
         i = gsl_rng_uniform_int(p->stream, cohort->num_ewes);
-        ewe = &cohort->ewes[i]; 
+        ewe = &cohort->ewes[i];
         if (ewe->state == Susceptible) {
             if (s == Exposed) {
                 ewe->state = Exposed;
@@ -212,7 +212,7 @@ static void remove_ewes_from_cohort(int n, cohort_t *cohort, gsl_rng *stream) {
 
     while (n > 0) {
         i = gsl_rng_uniform_int(stream, cohort->num_ewes);
-        ewe = &cohort->ewes[i]; 
+        ewe = &cohort->ewes[i];
         if (ewe->state != Removed) {
             ewe->state = Removed;
             n--;
@@ -254,7 +254,7 @@ static int sell_lambs(int n, cohort_t *lamb_cohort, params_t *p) {
             lamb->state = Removed;
             dam = lamb->dam;
             if (dam != NULL && dam->sero_status == Positive)
-                positive++; 
+                positive++;
         }
         free(objects);
     }
@@ -262,11 +262,11 @@ static int sell_lambs(int n, cohort_t *lamb_cohort, params_t *p) {
         // first remove lambs of oldest dams
         for (i = 0; i < nlambs; i++) {
             lamb = &lamb_cohort->ewes[i];
-            if (lamb->state != Removed && lamb->dam_age_at_birth == p->max_age) { 
+            if (lamb->state != Removed && lamb->dam_age_at_birth == p->max_age) {
                 lamb->state = Removed;
                 dam = lamb->dam;
                 if (dam != NULL && dam->sero_status == Positive)
-                    positive++; 
+                    positive++;
                 n--;
             }
         }
@@ -285,7 +285,7 @@ static int age_infected_ewes(cohort_t *cohort) {
     ewe_t *ewe;
 
     for (i = 0; i < cohort->num_ewes; i++) {
-        ewe = &cohort->ewes[i]; 
+        ewe = &cohort->ewes[i];
         // if reached latent period ewe becomes infectious
         if (ewe->state == Exposed)
             if (ewe->tsi >= ewe->latent_period)
@@ -351,7 +351,7 @@ static cohort_t *save_cohorts(cohort_t *cohorts, int n_cohorts, int max_age) {
     int i, j;
     cohort_t *cohort;
     cohort_t *saved_cohorts = init_cohorts(max_age+1);
-    
+
     for (i = 0; i <= max_age; i++) {
         cohort = get_cohort_of_age(i, cohorts, n_cohorts);
         if (cohort) {
@@ -375,7 +375,7 @@ static cohort_t *save_cohorts(cohort_t *cohorts, int n_cohorts, int max_age) {
 }
 
 result_t* Stochastic_Sim(params_t *p, void **saved_cohorts) {
-    // Stochastic simulation of an outbreak starting with a single infected lamb 
+    // Stochastic simulation of an outbreak starting with a single infected lamb
     int max_age = p->max_age;
     int sim_years = p->sim_years;
     int age_first_mating = p->age_first_mating;
@@ -417,7 +417,7 @@ result_t* Stochastic_Sim(params_t *p, void **saved_cohorts) {
 
     // print_contact_weights(contact_weights, March, p);
 
-    // set cohort ages, cohort 0 is the oldest, 
+    // set cohort ages, cohort 0 is the oldest,
     // cohort max_age is the youngest at age 0
     oldest_cohort = 0;
     youngest_cohort = max_age;
@@ -436,7 +436,7 @@ result_t* Stochastic_Sim(params_t *p, void **saved_cohorts) {
         // set number of seroconversions each year at start of year to 0
         seroconversions = 0;
 
-        for (m = April; m < March; m++) {
+        for (m = April; m <= March; m++) {
             month = 12*y+m;
 
             // in the first mating month make a 1 year old in mated flock infectious
@@ -477,7 +477,7 @@ result_t* Stochastic_Sim(params_t *p, void **saved_cohorts) {
                     r->tsi[month][i] = 0;
                 }
             }
-            
+
             for (c = oldest_cohort; c <= youngest_cohort; c++) {
                 cohort = &cohorts[c];
                 age_in_months = cohort->age_in_months;
@@ -498,7 +498,7 @@ result_t* Stochastic_Sim(params_t *p, void **saved_cohorts) {
                 // prob a ewe is still alive at end of month
                 p_alive = exp(-removal_rate[age_in_months]);
 
-                // force of infection experienced by this cohort  
+                // force of infection experienced by this cohort
                 foi = 0;
                 for (i = 0; i <= max_age; i++)
                     foi += contact_weights[m][i][age_in_months/12] * cohort_infectiousness[i];
@@ -520,7 +520,7 @@ result_t* Stochastic_Sim(params_t *p, void **saved_cohorts) {
                 n = get_number_in_cohort_in_state(Susceptible, cohort);
                 // printf("%d %f\n", n, p_infection);
 
-                // ignore this because we assume that all modes of virus transmission from dam 
+                // ignore this because we assume that all modes of virus transmission from dam
                 // to lamb is modelled via prob_dam_to_lamb
                 // lamb infection from dam before weaning
                 // maternal transmission via exhalation of virus during weaning
@@ -633,7 +633,7 @@ result_t* Stochastic_Sim(params_t *p, void **saved_cohorts) {
     //     }
     // }
     // exit(0);
-    
+
     if (*saved_cohorts == NULL)
         *saved_cohorts = save_cohorts(cohorts, n_cohorts, max_age);
     else

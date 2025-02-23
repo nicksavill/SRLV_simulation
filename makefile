@@ -10,7 +10,7 @@ FLAGS = $(OPT) $(WARNINGS) -fopenmp
 LIBS = -lm -lgsl -lgslcblas
 
 sim: sim.o ngm.o det.o ibm.o func.o
-	$(CC) $(FLAGS) $+ -o $@ $(LIBS) 
+	$(CC) $(FLAGS) $+ -o $@ $(LIBS)
 sim.o: sim.c R0.h
 	$(CC) -c $(FLAGS) $<
 ngm.o: ngm.c R0.h
